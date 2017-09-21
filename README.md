@@ -91,4 +91,6 @@ The suggested format is to group as many packages as possible in lists and set t
 ```
 
 ### Output
-![cli_out]
+Here is the output from a sample config showing all possible formats. It is an unrealistic config, but shows all supported formats and output.
+
+![cli_out](https://i.imgur.com/OhoeL4f.png)
