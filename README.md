@@ -55,7 +55,7 @@ The various formats supported are shown below. If you want to bundle a group of 
 - yum:
     package_one:
         options: "-vy"
-    package_two:
+    package_two: "-qy"
     package_three:
 ```
 _Note:_ This last format will do individual yum calls for each package. If there are dependencies between your listed packages it will fail.
