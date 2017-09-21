@@ -18,7 +18,7 @@ git submodule add https://gitlab.com/flyingchipmunk/dotbot-yum.git
   or
 
 ```
---plugin-dir /pato/to/plugin/folder`
+--plugin-dir /pato/to/plugin/folder
 ```
 
  **WARNING!**
