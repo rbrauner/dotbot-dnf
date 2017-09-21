@@ -41,7 +41,7 @@ Default options are applied to all ```yum``` tasks, but can be overridden per ta
 See `man yum` for possible command line options.
 
 ## Supported task variants
-The various formats supported are shown below. If you want to bundle a group of packages in the same ```yum``` call use the list format. This is important if you have cross dependencies on the yum packages in your list. i.e. package_one depends on package_two, use this format `- yum: [package_one, package_two]`. It also speeds up the process as the dependency scan only happens once instead of for each package individually.
+The various formats supported are shown below. If you want to bundle a group of packages in the same ```yum``` call use the list format. This speeds up the process as the dependency scan only happens once instead of for each package individually.
 
 
 ### Formats Supported
