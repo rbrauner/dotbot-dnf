@@ -35,7 +35,7 @@ Default options are applied to all ```yum``` tasks, but can be overridden per ta
 ```yaml
 - defaults:
     yum:
-        options: "-qy"
+        options: "-q -y"
 ```
 
 See `man yum` for possible command line options.
@@ -54,8 +54,8 @@ The various formats supported are shown below. If you want to bundle a group of 
 ```yaml
 - yum:
     package_one:
-        options: "-vy"
-    package_two: "-qy"
+        options: "-v -y"
+    package_two: "-q -y"
     package_three:
 ```
 _Note:_ This last format will do individual yum calls for each package. If there are dependencies between your listed packages it will fail.
@@ -80,7 +80,7 @@ The suggested format is to group as many packages as possible in lists and set t
 ```yaml
 - defaults:
     yum:
-        options: "-qy"
+        options: "-q -y"
 
 - yum: [gcc, poco-devel, libjson-devel]
 ```

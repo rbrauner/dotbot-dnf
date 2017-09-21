@@ -24,7 +24,6 @@ class Yum(dotbot.Plugin):
             self._log.error(msg)
             raise YumError(msg)
 
-        success = True
         defaults = self._context.defaults().get('yum', {})
         yum_opts = defaults.get('options', '')
 
@@ -40,11 +39,15 @@ class Yum(dotbot.Plugin):
             for pkg_name, pkg_opts in packages.items():
                 if isinstance(pkg_opts, dict):
                     yum_opts = pkg_opts.get('options', yum_opts)
-                else if pkg_opts:
+                elif pkg_opts:
                     yum_opts = pkg_opts
+                else:
+                    yum_opts = defaults.get('options', '')
 
                 if not self._install(pkg_name, yum_opts):
                     return False
+
+            return True
 
 
     def _install(self, packages, opts):
@@ -56,10 +59,10 @@ class Yum(dotbot.Plugin):
         with open(os.devnull, 'w') as devnull:
             stdin = stdout = stderr = devnull
 
-            log.info("Installing [{0}] with options [{1}]".format(packages, opts))
+            self._log.info("Installing [{0}] with options [{1}]".format(packages, opts))
 
             cmd = "yum install {0} {1}".format(opts, packages)
-            ret_code = subprocess.call(cmd, shell=True, stdin=stdin, stdout=stdout, stderr=stderr, cwd=cwd)
+            ret_code = subprocess.call(cmd, shell=True, stdin=stdin, stdout=None, stderr=None, cwd=cwd)
 
             if ret_code != 0:
                 self._log.error("Failed to install [{0}]".format(packages))
