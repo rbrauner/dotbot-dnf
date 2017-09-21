@@ -58,7 +58,7 @@ The various formats supported are shown below. If you want to bundle a group of 
     package_two: "-q -y"
     package_three:
 ```
-_Note:_ This last format will do individual yum calls for each package. If there are dependencies between your listed packages it will fail.
+_Note:_ This last format will do individual yum calls for each package. If you are installing local rpms and there are dependencies between your listed packages it will fail.
 
 ### Specifying package names
 Again see `man yum` for more details, but in general these formats are supported by yum.
