@@ -1,6 +1,6 @@
 # Dotbot ```yum``` Plugin
 
-Plugin for [Dotbot](https://github.com/anishathalye/dotbot), that adds ```yum``` directive, which allows you to install and upgrade packages using ```yum```.
+Plugin for [Dotbot](https://github.com/anishathalye/dotbot), that adds ```yum``` directive, which allows you to install and upgrade packages and groups using ```yum```.
 
 ## Installation
 
@@ -18,7 +18,7 @@ git submodule add https://gitlab.com/flyingchipmunk/dotbot-yum.git
   or
 
 ```
---plugin-dir /pato/to/plugin/folder
+--plugin-dir /path/to/plugin/folder
 ```
 
  **WARNING!**
@@ -26,7 +26,11 @@ git submodule add https://gitlab.com/flyingchipmunk/dotbot-yum.git
  Dotbot (or install script) needs to be executed with root permissions (as sudo) in order to install/upgrade packages. It is strongly recommended to place ```yum``` tasks in a separate config!
 
 ## Options
-`options` - specify any command line options to be passed to yum
+`options` - Command line options to be passed to yum. See `man yum` for possible command line options.
+`group`   - If the package(s) listed are yum groups, set this to `True`. Default is `False`. This changes the command from `yum install` to `yum groupinstall`
+`stdin`   - Set to `True` this enables stdin.  Defaults to `False`
+`stdout`  - Set to `True` this enables stdout. Defaults to `False`
+`stderr`  - Set to `True` this enables stderr. Defaults to `False`
 
 ## Defaults
 Default options are applied to all ```yum``` tasks, but can be overridden per task.
@@ -36,9 +40,9 @@ Default options are applied to all ```yum``` tasks, but can be overridden per ta
 - defaults:
     yum:
         options: "-q -y"
+        stdout: False
+        stderr: True
 ```
-
-See `man yum` for possible command line options.
 
 ## Supported task variants
 The various formats supported are shown below. If you want to bundle a group of packages in the same ```yum``` call use the list format. This speeds up the process as the dependency scan only happens once instead of for each package individually.
@@ -57,8 +61,10 @@ The various formats supported are shown below. If you want to bundle a group of 
         options: "-v -y"
     package_two: "-q -y"
     package_three:
+        group: True
+    package_four
 ```
-_Note:_ This last format will do individual yum calls for each package. If you are installing local rpms and there are dependencies between your listed packages it will fail.
+_Notes:_ The last format will do individual yum install calls for each package listed. It is the only supported format for specifying a groupinstall. If you are installing local rpms and there are dependencies between your listed packages it will fail.
 
 ### Specifying package names
 Again see `man yum` for more details, but in general these formats are supported by yum.
@@ -70,6 +76,11 @@ name-ver-rel
 name-ver-rel.arch
 name-epoch:ver-rel.arch
 epoch:name-ver-rel.arch
+```
+
+To see a list of yum groups that are available:
+```
+yum grouplist -v 
 ```
 
 ## Usage
