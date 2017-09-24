@@ -25,24 +25,24 @@ class Yum(dotbot.Plugin):
             raise YumError(msg)
 
         defaults = self._context.defaults().get('yum', {})
-        yum_opts = defaults.get('options', '')
 
         if isinstance(packages, str):
             # single package
-            return self._install(packages, yum_opts)
+            return self._install(packages, defaults)
         elif isinstance(packages, list):
             # multiple packages in list, one install for all
             pkg_list = ' '.join(packages)
-            return self._install(pkg_list, yum_opts)
+            return self._install(pkg_list, defaults)
         elif isinstance(packages, dict):
             # multiple packages in dict with possible otions, one install per package
             for pkg_name, pkg_opts in packages.items():
+                yum_opts = {}
                 if isinstance(pkg_opts, dict):
-                    yum_opts = pkg_opts.get('options', yum_opts)
+                    yum_opts = self._merge_dicts(defaults, pkg_opts)
                 elif pkg_opts:
-                    yum_opts = pkg_opts
+                    yum_opts = self._merge_dicts(defaults, {'options': pkg_opts})
                 else:
-                    yum_opts = defaults.get('options', '')
+                    yum_opts = defaults
 
                 if not self._install(pkg_name, yum_opts):
                     return False
@@ -50,7 +50,7 @@ class Yum(dotbot.Plugin):
             return True
 
 
-    def _install(self, packages, opts):
+    def _install(self, packages, pkg_opts={}):
         if not packages:
             return True
 
@@ -59,15 +59,38 @@ class Yum(dotbot.Plugin):
         with open(os.devnull, 'w') as devnull:
             stdin = stdout = stderr = devnull
 
-            self._log.info("Installing [{0}] with options [{1}]".format(packages, opts))
+            if pkg_opts.get('stdin', False) == True:
+                stdin = None
+            if pkg_opts.get('stdout', False) == True:
+                stdout = None
+            if pkg_opts.get('stderr', False) == True:
+                stderr = None
 
-            cmd = "yum install {0} {1}".format(opts, packages)
-            ret_code = subprocess.call(cmd, shell=True, stdin=stdin, stdout=None, stderr=None, cwd=cwd)
+            if 'options' not in pkg_opts:
+                pkg_opts['options'] = ''
+
+            group_str = 'group' if pkg_opts.get('group', False) == True else ''
+
+            self._log.info("Installing [{0}] with options [{1}]".format(packages, pkg_opts['options']))
+
+            cmd = "yum {0} {1}install {2}".format(pkg_opts['options'], group_str, packages)
+            ret_code = subprocess.call(cmd, shell=True, stdin=stdin, stdout=stdout, stderr=stderr, cwd=cwd)
 
             if ret_code != 0:
-                self._log.error("Failed to install [{0}]".format(packages))
+                self._log.error("Failed to {0}install [{1}]".format(group_str, packages))
                 return False
             return True
+
+
+    def _merge_dicts(self, *dict_args):
+        """
+        Given any number of dicts, shallow copy and merge into a new dict,
+        precedence goes to key value pairs in latter dicts.
+        """
+        result = {}
+        for dictionary in dict_args:
+            result.update(dictionary)
+        return result
 
 
 class YumError(Exception):
