@@ -34,7 +34,7 @@ class Yum(dotbot.Plugin):
             pkg_list = ' '.join(packages)
             return self._install(pkg_list, defaults)
         elif isinstance(packages, dict):
-            # multiple packages in dict with possible otions, one install per package
+            # multiple packages in dict with possible options, one install per package
             for pkg_name, pkg_opts in packages.items():
                 yum_opts = {}
                 if isinstance(pkg_opts, dict):
