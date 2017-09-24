@@ -30,11 +30,11 @@ git submodule add https://gitlab.com/flyingchipmunk/dotbot-yum.git
 
 `group`   - If the package(s) listed are yum groups, set this to `True`. Default is `False`. This changes the command from `yum install` to `yum groupinstall`
 
-`stdin`   - Set to `True` this enables stdin.  Defaults to `False`
+`stdin`   - Set to `True` this enables stdin.  Default is `False`
 
-`stdout`  - Set to `True` this enables stdout. Defaults to `False`
+`stdout`  - Set to `True` this enables stdout. Default is `False`
 
-`stderr`  - Set to `True` this enables stderr. Defaults to `False`
+`stderr`  - Set to `True` this enables stderr. Default is `False`
 
 &nbsp;
 
