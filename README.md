@@ -27,10 +27,16 @@ git submodule add https://gitlab.com/flyingchipmunk/dotbot-yum.git
 
 ## Options
 `options` - Command line options to be passed to yum. See `man yum` for possible command line options.
+
 `group`   - If the package(s) listed are yum groups, set this to `True`. Default is `False`. This changes the command from `yum install` to `yum groupinstall`
+
 `stdin`   - Set to `True` this enables stdin.  Defaults to `False`
+
 `stdout`  - Set to `True` this enables stdout. Defaults to `False`
+
 `stderr`  - Set to `True` this enables stderr. Defaults to `False`
+
+&nbsp;
 
 ## Defaults
 Default options are applied to all ```yum``` tasks, but can be overridden per task.
@@ -62,7 +68,7 @@ The various formats supported are shown below. If you want to bundle a group of 
     package_two: "-q -y"
     package_three:
         group: True
-    package_four
+    package_four:
 ```
 _Notes:_ The last format will do individual yum install calls for each package listed. It is the only supported format for specifying a groupinstall. If you are installing local rpms and there are dependencies between your listed packages it will fail.
 
@@ -92,8 +98,16 @@ The suggested format is to group as many packages as possible in lists and set t
 - defaults:
     yum:
         options: "-q -y"
+        stdout: False
+        stderr: True
 
-- yum: [gcc, poco-devel, libjson-devel]
+- yum:
+    dev-yumgroup:
+      options: '-q -y --disablerepo=* --enablerepo=mainline --enablerepo=mainline-extra'
+      group: True
+
+- yum: [gdb, valgrind]
+
 ```
 
 ### Execution
