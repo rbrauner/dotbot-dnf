@@ -43,11 +43,21 @@ class Yum(dotbot.Plugin):
                     return False
 
             return True
+        else:
+            self._log.error("Invalid package specification [{0}]".format(packages))
+            return False
 
 
     def _install(self, packages, pkg_opts={}):
         if not packages:
+            self._log.info('Unexpected empty packages specification, skipping')
             return True
+
+        is_sudo = pkg_opts.get('sudo', False)
+        if os.geteuid() != 0 and is_sudo == False:
+            msg = 'Need root permissions to install packages'
+            self._log.error(msg)
+            raise YumError(msg)
 
         cwd = self._context.base_directory()
 
@@ -64,14 +74,8 @@ class Yum(dotbot.Plugin):
             if 'options' not in pkg_opts:
                 pkg_opts['options'] = ''
 
-            is_sudo = pkg_opts.get('sudo', False)
             sudo_str = 'sudo ' if is_sudo else ''
             group_str = ' group' if pkg_opts.get('group', False) == True else ''
-
-            if os.geteuid() != 0 and not is_sudo:
-                msg = 'Need root permissions to install packages'
-                self._log.error(msg)
-                raise YumError(msg)
 
             self._log.info("Installing [{0}] with options [{1}]".format(packages, pkg_opts['options']))
 
