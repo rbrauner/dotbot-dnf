@@ -19,11 +19,6 @@ class Yum(dotbot.Plugin):
 
 
     def _process_packages(self, packages):
-        if os.geteuid() != 0:
-            msg = 'Need root permissions to install packages'
-            self._log.error(msg)
-            raise YumError(msg)
-
         defaults = self._context.defaults().get('yum', {})
 
         if isinstance(packages, str):
@@ -69,15 +64,22 @@ class Yum(dotbot.Plugin):
             if 'options' not in pkg_opts:
                 pkg_opts['options'] = ''
 
-            group_str = 'group' if pkg_opts.get('group', False) == True else ''
+            is_sudo = pkg_opts.get('sudo', False)
+            sudo_str = 'sudo ' if is_sudo else ''
+            group_str = ' group' if pkg_opts.get('group', False) == True else ''
+
+            if os.geteuid() != 0 and not is_sudo:
+                msg = 'Need root permissions to install packages'
+                self._log.error(msg)
+                raise YumError(msg)
 
             self._log.info("Installing [{0}] with options [{1}]".format(packages, pkg_opts['options']))
 
-            cmd = "yum {0} {1}install {2}".format(pkg_opts['options'], group_str, packages)
+            cmd = "{0}yum {1}{2}install {3}".format(sudo_str, pkg_opts['options'], group_str, packages)
             ret_code = subprocess.call(cmd, shell=True, stdin=stdin, stdout=stdout, stderr=stderr, cwd=cwd)
 
             if ret_code != 0:
-                self._log.error("Failed to {0}install [{1}]".format(group_str, packages))
+                self._log.error("Failed to{0}install [{1}]".format(group_str, packages))
                 return False
             return True
 
