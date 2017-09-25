@@ -30,7 +30,7 @@ git submodule add https://gitlab.com/flyingchipmunk/dotbot-yum.git
 
 `group`   - If the package(s) listed are yum groups, set this to `True`. Default is `False`. This changes the command from `yum install` to `yum groupinstall`
 
-`sudo`    - To execute the yum command with sudo, set this to `True`. *Use with caution! This option is normally not needed or suggested.* If you are choosing to use the ```yum``` directive in your main dotbot config and your user account is a sudoer you may use this to run only your ```yum``` directives under sudo privileges instead of having to run your entire config with root privileges.
+`sudo`    - To execute the yum command with sudo, set this to `True`. *Use with caution! This option is normally not needed or suggested.* If you are choosing to use the ```yum``` directive in your main dotbot config and your user account is a sudoer you may use this to run only your ```yum``` directives under sudo privileges instead of having to run your entire config with root privileges. Default is `False`
 
 `stdin`   - Set to `True` this enables stdin.  Default is `False`
 
