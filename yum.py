@@ -79,7 +79,7 @@ class Yum(dotbot.Plugin):
 
             self._log.info("Installing [{0}] with options [{1}]".format(packages, pkg_opts['options']))
 
-            cmd = "{0}yum {1}{2}install {3}".format(sudo_str, pkg_opts['options'], group_str, packages)
+            cmd = "{0}yum {1} {2}install {3}".format(sudo_str, pkg_opts['options'], group_str, packages)
             ret_code = subprocess.call(cmd, shell=True, stdin=stdin, stdout=stdout, stderr=stderr, cwd=cwd)
 
             if ret_code != 0:
