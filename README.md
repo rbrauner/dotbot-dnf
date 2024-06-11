@@ -7,7 +7,7 @@ Plugin for [Dotbot](https://github.com/anishathalye/dotbot), that adds ```dnf```
 1) Simply add this repo as a submodule of your dotfiles repository:
 
 ```
-git submodule add https://gitlab.com/flyingchipmunk/dotbot-dnf.git
+git submodule add https://github.com/rbrauner/dotbot-dnf.git
 ```
 
 2) Pass this folder (or directly dnf.py file) path with corresponding flag to your [Dotbot](https://github.com/anishathalye/dotbot) script:
