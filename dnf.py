@@ -1,14 +1,14 @@
 import os, platform, subprocess, dotbot
 
-class Yum(dotbot.Plugin):
-    _directive = "yum"
+class dnf(dotbot.Plugin):
+    _directive = "dnf"
 
     def can_handle(self, directive):
         return directive == self._directive
 
     def handle(self, directive, data):
         if directive != self._directive:
-            raise ValueError('yum cannot handle directive {0}'.format(directive))
+            raise ValueError('dnf cannot handle directive {0}'.format(directive))
         success = self._process_packages(data)
         if success:
             self._log.info('All packages have been installed')
@@ -19,7 +19,7 @@ class Yum(dotbot.Plugin):
 
 
     def _process_packages(self, packages):
-        defaults = self._context.defaults().get('yum', {})
+        defaults = self._context.defaults().get('dnf', {})
 
         if isinstance(packages, str):
             # single package
@@ -31,15 +31,15 @@ class Yum(dotbot.Plugin):
         elif isinstance(packages, dict):
             # multiple packages in dict with possible options, one install per package
             for pkg_name, pkg_opts in packages.items():
-                yum_opts = {}
+                dnf_opts = {}
                 if isinstance(pkg_opts, dict):
-                    yum_opts = self._merge_dicts(defaults, pkg_opts)
+                    dnf_opts = self._merge_dicts(defaults, pkg_opts)
                 elif pkg_opts:
-                    yum_opts = self._merge_dicts(defaults, {'options': pkg_opts})
+                    dnf_opts = self._merge_dicts(defaults, {'options': pkg_opts})
                 else:
-                    yum_opts = defaults
+                    dnf_opts = defaults
 
-                if not self._install(pkg_name, yum_opts):
+                if not self._install(pkg_name, dnf_opts):
                     return False
 
             return True
@@ -57,7 +57,7 @@ class Yum(dotbot.Plugin):
         if os.geteuid() != 0 and is_sudo == False:
             msg = 'Need root permissions to install packages'
             self._log.error(msg)
-            raise YumError(msg)
+            raise dnfError(msg)
 
         cwd = self._context.base_directory()
 
@@ -79,7 +79,7 @@ class Yum(dotbot.Plugin):
 
             self._log.info("Installing [{0}] with options [{1}]".format(packages, pkg_opts['options']))
 
-            cmd = "{0}yum {1} {2}install {3}".format(sudo_str, pkg_opts['options'], group_str, packages)
+            cmd = "{0}dnf {1} {2}install {3}".format(sudo_str, pkg_opts['options'], group_str, packages)
             ret_code = subprocess.call(cmd, shell=True, stdin=stdin, stdout=stdout, stderr=stderr, cwd=cwd)
 
             if ret_code != 0:
@@ -99,5 +99,5 @@ class Yum(dotbot.Plugin):
         return result
 
 
-class YumError(Exception):
+class dnfError(Exception):
     pass
